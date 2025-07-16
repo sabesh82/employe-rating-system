@@ -1,23 +1,26 @@
 import axios, { AxiosError, CreateAxiosDefaults, ResponseType } from "axios";
 
+type method = "get" | "post" | "patch" | "put" | "delete";
+
 const toastService = {
-  //TODO : will be replaced with toast component.
   error: (_message: string) => {},
 };
 
 const createApiClient = ({
   baseURL,
   responseType = "json",
-  options,
   headers,
+  method,
   getToken,
   logout,
+  options,
 }: {
   baseURL: string;
   responseType?: ResponseType;
   getToken: () => string | null;
   logout: () => void;
   headers?: CreateAxiosDefaults["headers"];
+  method?: method;
   options?: Omit<
     CreateAxiosDefaults,
     "baseURL" | "method" | "responseType" | "headers"
@@ -27,6 +30,7 @@ const createApiClient = ({
     baseURL: baseURL,
     responseType: responseType,
     headers: headers ?? { "Content-Type": "application/json" },
+    method: method,
     ...options,
   });
 

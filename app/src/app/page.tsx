@@ -44,7 +44,9 @@ const Home = () => {
       </div>
       <button
         onClick={() => {
-          Cookie.remove(cookieKeys.USER_TOKEN), router.push("/login");
+          (Cookie.remove(cookieKeys.USER_TOKEN),
+            Cookie.remove(cookieKeys.USER),
+            router.push("/login"));
         }}
         className="mt-25 rounded-3xl bg-red-500 p-1 text-white"
       >

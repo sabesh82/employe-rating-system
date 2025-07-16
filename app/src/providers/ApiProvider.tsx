@@ -1,8 +1,9 @@
 "use client";
 
-import createApiClient from "@/app/api/helpers/baseApi";
+import createApiClient from "@/app/api-client/baseApi";
+import { useAuth, useAuthActions } from "@/stores/authStore";
 import { AxiosInstance } from "axios";
-import { createContext, ReactNode, useContext } from "react";
+import { createContext, ReactNode, useCallback, useContext } from "react";
 
 interface IApiContext {
   jsonApiClient: AxiosInstance;
@@ -11,10 +12,15 @@ interface IApiContext {
 const ApiContext = createContext<IApiContext | null>(null);
 
 const ApiProvider = ({ children }: { children: ReactNode }) => {
+  const { authToken } = useAuth();
+  const { logout } = useAuthActions();
+
+  const getAccessToken = useCallback(() => authToken ?? null, [authToken]);
+
   const jsonApiClient = createApiClient({
     baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || "",
-    getToken: () => null,
-    logout: () => {},
+    getToken: getAccessToken,
+    logout: logout,
   });
 
   return (
