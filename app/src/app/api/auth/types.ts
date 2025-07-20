@@ -20,7 +20,7 @@ export type UserWithRelations = Prisma.UserGetPayload<{
     updatedAt: true;
     OrganizationMembers: true;
     OwnedOrganizations: true;
-    RatingsAsEmployee: true;
-    RatingsAsSupervisor: true;
+    ReceivedRatings: true;
+    GivenRatings: true;
   };
 }>;

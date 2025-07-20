@@ -30,17 +30,17 @@ export async function GET(request: NextRequest) {
             },
             OwnedOrganizations: true,
 
-            RatingsAsEmployee: {
+            ReceivedRatings: {
               include: {
                 Supervisor: true,
-                criteriaScore: true,
+                criteriaScores: true,
               },
             },
 
-            RatingAsSupervisor: {
+            GivenRatings: {
               include: {
                 Employee: true,
-                criteriaScore: true,
+                criteriaScores: true,
               },
             },
           },

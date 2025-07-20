@@ -26,7 +26,7 @@ const LoginForm = () => {
     resolver: zodResolver(LoginUserSchema),
   });
 
-  const { mutateAsync: login } = useLogin({
+  const { mutateAsync: login} = useLogin({
     invalidateQueryKey: [],
   });
 

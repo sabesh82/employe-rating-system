@@ -20,18 +20,18 @@ const page = () => {
           </div>
 
           {/*form section*/}
-          <div className="mt-10 flex flex-1 items-center justify-center md:mt-3">
+          <div className="mt-12 flex flex-1 items-center justify-center md:mt-3">
             <div className="flex w-full max-w-[22rem] flex-col">
               <header className="mb-6">
                 {/*rotated logo*/}
-                <div className="flex justify-center">
-                  <div className="relative z-20 mb-10">
-                    <div className="rounded-2xl bg-white/20 p-3 shadow-xl ring shadow-gray-700/50 ring-white backdrop-blur-sm">
-                      <IoFingerPrint className="size-7 text-white" />
+                <div className="mb-8 flex justify-center">
+                  <div className="relative z-20">
+                    <div className="rounded-xl bg-white/20 p-2.5 shadow-xl ring shadow-gray-700/50 ring-white backdrop-blur-sm md:rounded-2xl md:p-3">
+                      <IoFingerPrint className="size-5 text-black md:size-7" />
                     </div>
 
                     <div className="absolute inset-0 -z-10">
-                      <div className="-mt-2.5 ml-2.5 size-full rotate-12 rounded-2xl bg-gray-500"></div>
+                      <div className="-mt-2.5 ml-2.5 size-full rotate-12 rounded-xl bg-gray-500 md:rounded-2xl"></div>
                     </div>
                   </div>
                 </div>

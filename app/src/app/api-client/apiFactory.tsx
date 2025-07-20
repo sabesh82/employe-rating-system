@@ -49,8 +49,8 @@ interface CreateMutationParams<TData, TParams, TBody, TOptimisticData> {
 }
 
 export function useCreateMutation<
-  TParams extends Record<string, any> = Record<string, any>, //  any dynamic params used in the URL (e.g. { id: 123 })
-  TBody = unknown, //data you send in the request body
+  TParams extends Record<string, any> = Record<string, any>, // any dynamic params used in the URL or What you pass as URL parameters (e.g. { id: 123 })
+  TBody = unknown, //data you send in the request body (e.g. form inputs)
   TData = unknown, //expected response from the API
   TOptimisticData = unknown, //shape of the cached data you might optimistically update
 >({
@@ -133,6 +133,9 @@ export function useCreateMutation<
 
     // If the mutation fails,
     // use the context returned from onMutate to roll back
+    // err: The error object that tells us what went wrong.
+    //variables: The input data you tried to send with the mutation.
+    //context: The info returned by onMutate (your backup of old data for rollback).
     onError: (err, variables, context) => {
       if (invalidateQueryKey && context?.previousData !== undefined) {
         queryClient.setQueryData<TOptimisticData>(
