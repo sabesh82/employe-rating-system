@@ -26,7 +26,7 @@ const LoginForm = () => {
     resolver: zodResolver(LoginUserSchema),
   });
 
-  const { mutateAsync: login} = useLogin({
+  const { mutateAsync: login } = useLogin({
     invalidateQueryKey: [],
   });
 
@@ -52,19 +52,21 @@ const LoginForm = () => {
       {/*email*/}
       <label
         htmlFor="email"
-        className="text-md mb-1 flex justify-start text-gray-900"
+        className="text-md mb-1 flex justify-start text-gray-900 dark:text-white/80"
       >
         Email
       </label>
       <Input
         type="email"
-        className={"w-full bg-gray-100/50"}
+        className={
+          "w-full bg-gray-100/50 dark:border-gray-300/20 dark:bg-white/10 dark:text-gray-200"
+        }
         placeholder="enter your username"
         {...register("email")}
         Icon={() => (
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="size-5"
+            className="size-5 dark:text-gray-200"
             viewBox="0 0 24 24"
           >
             <circle cx={12} cy={6} r={4} fill="currentColor" />
@@ -85,19 +87,19 @@ const LoginForm = () => {
       {/*password*/}
       <label
         htmlFor="password"
-        className="text-md mb-1 flex justify-start text-gray-900"
+        className="text-md mb-1 flex justify-start text-gray-900 dark:text-white/80"
       >
         Password
       </label>
       <Input
         type="password"
-        className="w-full bg-gray-100/50"
+        className="w-full bg-gray-100/50 dark:border-gray-300/20 dark:bg-white/10 dark:text-gray-200"
         placeholder="enter your password"
         {...register("password")}
         Icon={() => (
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="size-5"
+            className="size-5 dark:text-gray-200"
             viewBox="0 0 24 24"
           >
             <path
@@ -117,7 +119,7 @@ const LoginForm = () => {
       {/*button*/}
       <button
         type="submit"
-        className="mt-3 w-full cursor-pointer rounded-lg bg-gradient-to-r from-gray-900 via-gray-700 to-gray-900 px-3 py-[0.45rem] text-lg font-normal text-white hover:-translate-y-0.5 hover:bg-purple-700"
+        className="mt-3 w-full cursor-pointer rounded-lg bg-gradient-to-r from-gray-900 via-gray-700 to-gray-900 px-3 py-[0.45rem] text-lg font-normal text-white hover:-translate-y-0.5 dark:bg-yellow-600/100 dark:bg-none dark:text-white"
       >
         {isSubmitting ? "loggin in..." : "login"}
       </button>
