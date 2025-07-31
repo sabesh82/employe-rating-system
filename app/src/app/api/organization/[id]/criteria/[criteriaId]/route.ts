@@ -80,6 +80,25 @@ export async function DELETE(
     },
     async () => {
       try {
+        const criteria = await prisma.criteria.findUnique({
+          where: {
+            id: criteriaId,
+          },
+        });
+
+        if (!criteria) {
+          return NextResponse.json(
+            {
+              success: false,
+              error: {
+                code: "CRITERIA_NOT_FOUND",
+                message: "criteria not found",
+              },
+            },
+            { status: 404 },
+          );
+        }
+
         // Delete criteria
         await prisma.criteria.delete({
           where: { id: criteriaId },

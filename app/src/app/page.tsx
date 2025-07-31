@@ -1,5 +1,43 @@
 "use client";
 
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import CircularProgress from "@mui/material/CircularProgress";
+
+export default function Home() {
+  const router = useRouter();
+
+  useEffect(() => {
+    router.replace("/home/dashboard");
+  }, [router]);
+
+  return (
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "100vh",
+      }}
+    >
+      <CircularProgress />
+    </div>
+  );
+}
+
+{
+  /*import { redirect } from "next/navigation";
+
+export default function Home() {
+  redirect("/dashboard");
+}
+
+*/
+}
+{
+  /*
+  "use client";
+
 import cookieKeys from "@/configs/cookieKeys";
 import { useThemeActions } from "@/stores/themeStore";
 import Cookie from "js-cookie";
@@ -57,3 +95,5 @@ const Home = () => {
 };
 
 export default Home;
+*/
+}

@@ -10,7 +10,7 @@ export interface IJWTPayload extends Record<string, any> {
   }[];
 }
 
-export default function generateToken<T extends Record<string, string>>(
+export default function generateToken<T extends Record<string, any>>(
   payload: T,
   options: jwt.SignOptions = {
     expiresIn: "1w",

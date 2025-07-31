@@ -5,7 +5,7 @@ import type { NextRequest } from "next/server";
 export async function middleware(request: NextRequest, _: NextResponse) {
   const session = request.cookies.get(cookieKeys.USER_TOKEN);
 
-  const onlyPublicRoutes = ["/login", "/sign-up"];
+  const onlyPublicRoutes = ["/login", "/register"];
 
   const isOnlyPublic = onlyPublicRoutes.includes(request.nextUrl.pathname);
 
@@ -35,5 +35,5 @@ export async function middleware(request: NextRequest, _: NextResponse) {
 }
 
 export const config = {
-  matcher: ["/login/:paths*", "/sign-up/:paths*", "/protected/:paths*"],
+  matcher: ["/login/:paths*", "/register/:paths*", "/home/:paths*"],
 };

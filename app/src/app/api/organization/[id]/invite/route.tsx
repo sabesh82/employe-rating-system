@@ -12,6 +12,7 @@ import generateInviteToken from "./generateInviteToken";
 import InviteUser from "@/email-templates/InviteUser";
 import handleError from "@/app/api/helpers/handleError";
 import { render } from "@react-email/components";
+import { sendEmail } from "@/lib/nodemailer";
 
 const generateRandomPassword = (): string => {
   const array = new Uint32Array(2);
@@ -137,7 +138,7 @@ export async function POST(
           organizationId,
         });
 
-        const inviteLink = " "; //need to add the code here
+        const inviteLink = `${process.env.NEXT_PUBLIC_HOST_URL}/invite?token=${token}`;
 
         //send invitation email
         const emailHtml = await render(

@@ -39,6 +39,18 @@ export async function POST(request: NextRequest) {
     const hashedPassword = await hash(password);
 
     const result = await prisma.$transaction(async (tx) => {
+      await tx.organizationMember.update({
+        where: {
+          userId_organizationId: {
+            userId: decodedToken.id,
+            organizationId: decodedToken.organizationId,
+          },
+        },
+        data: {
+          status: UserStatus.ACTIVE,
+        },
+      });
+
       const user = await tx.user.update({
         where: {
           id: decodedToken.id,
@@ -64,18 +76,6 @@ export async function POST(request: NextRequest) {
               status: true,
             },
           },
-        },
-      });
-
-      await tx.organizationMember.update({
-        where: {
-          userId_organizationId: {
-            userId: decodedToken.id,
-            organizationId: decodedToken.organizationId,
-          },
-        },
-        data: {
-          status: UserStatus.ACTIVE,
         },
       });
 
@@ -107,6 +107,7 @@ export async function POST(request: NextRequest) {
     );
   } catch (error) {
     if (error instanceof PrismaClientKnownRequestError) {
+      //The item you’re trying to update or delete doesn’t exist.
       if (error.code === "P2025") {
         return NextResponse.json(
           {
