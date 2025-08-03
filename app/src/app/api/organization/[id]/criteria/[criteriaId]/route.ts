@@ -6,14 +6,17 @@ import { CriteriaSchema } from "@/schemas/criteria.schema";
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: Promise<{ criteriaId: string }> },
+  {
+    params,
+  }: { params: Promise<{ organizationId: string; criteriaId: string }> },
 ) {
-  const { criteriaId } = await params;
+  const { organizationId, criteriaId } = await params;
   const body = await request.json();
 
   return privateRoute(
     request,
     {
+      organizationId,
       permissions: ["ORGANIZATION:CRITERIA:UPDATE", "ORGANIZATION:*:*"],
     },
     async () => {
@@ -69,37 +72,36 @@ export async function PATCH(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: Promise<{ criteriaId: string }> },
+  { params }: { params: Promise<{ id: string; criteriaId: string }> },
 ) {
-  const { criteriaId } = await params;
+  const { id: organizationId, criteriaId } = await params;
 
   return privateRoute(
     request,
     {
+      organizationId,
       permissions: ["ORGANIZATION:CRITERIA:DELETE", "ORGANIZATION:*:*"],
     },
     async () => {
       try {
         const criteria = await prisma.criteria.findUnique({
-          where: {
-            id: criteriaId,
-          },
+          where: { id: criteriaId },
         });
 
-        if (!criteria) {
+        // Optional: Verify the criteria belongs to the organization
+        if (!criteria || criteria.orgId !== organizationId) {
           return NextResponse.json(
             {
               success: false,
               error: {
                 code: "CRITERIA_NOT_FOUND",
-                message: "criteria not found",
+                message: "Criteria not found in this organization",
               },
             },
             { status: 404 },
           );
         }
 
-        // Delete criteria
         await prisma.criteria.delete({
           where: { id: criteriaId },
         });

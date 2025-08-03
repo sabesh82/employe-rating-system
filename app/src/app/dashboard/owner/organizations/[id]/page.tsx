@@ -1,18 +1,23 @@
 "use client";
 import React from "react";
-import Input from "../../components/input";
+
 import { FaUserPlus } from "react-icons/fa6";
 import { FaUserCircle } from "react-icons/fa";
 import { MdKeyboardArrowRight } from "react-icons/md";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/stores/authStore";
-import DateTime from "../../components/DateTime";
+
 import { SlOptionsVertical } from "react-icons/sl";
 import { TbSpeakerphone } from "react-icons/tb";
+import Input from "@/app/components/input";
+import DateTime from "@/app/components/DateTime";
 
 const Home = () => {
   const { user } = useAuth();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const orgName = searchParams.get("orgName");
+
   return (
     <section className="h-screen w-full">
       <div className="flex flex-col">
@@ -53,7 +58,9 @@ const Home = () => {
 
         {/*hero section*/}
         <div className="mb-3.5 flex items-center justify-between px-10.5">
-          <p className="text-2xl text-gray-800">Welcome, {user?.firstName}👋</p>
+          <p className="text-2xl text-gray-800">
+            Welcome, {user?.firstName}👋 {orgName && <>to {orgName}</>}
+          </p>
           <div className="rounded-lg border border-gray-300 bg-gray-200 px-2 py-1 text-sm text-black shadow-lg">
             <DateTime />
           </div>
@@ -77,7 +84,7 @@ const Home = () => {
               </p>
               <button
                 className="mt-4 flex cursor-pointer items-center gap-1 rounded-2xl bg-gray-300 px-1 py-0.5 text-white transition duration-200 hover:bg-gray-400/100"
-                onClick={() => router.push("/organization")}
+                onClick={() => router.push("/dashboard/organizations/neworg")}
               >
                 <p className="text-md text-black">Create New Organization</p>
                 <div className="rounded-full bg-black p-1">

@@ -98,3 +98,41 @@ export async function POST(request: NextRequest) {
     }
   });
 }
+
+export async function GET(request: NextRequest) {
+  return privateRoute(request, { permissions: [] }, async (curruser) => {
+    try {
+      const organizations = await prisma.organization.findMany({
+        where: {
+          ownerId: curruser.id,
+        },
+        select: {
+          id: true,
+          name: true,
+          createdAt: true,
+          Owner: true,
+          status: true,
+        },
+        orderBy: {
+          createdAt: "asc",
+        },
+      });
+
+      return NextResponse.json(
+        {
+          success: true,
+          organizations,
+        },
+        { status: 200 },
+      );
+    } catch (error) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Failed to fetch organizations.",
+        },
+        { status: 500 },
+      );
+    }
+  });
+}
