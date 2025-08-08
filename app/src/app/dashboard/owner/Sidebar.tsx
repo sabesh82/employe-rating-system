@@ -210,7 +210,7 @@ const SideBar = () => {
                 ? "rounded-md border border-gray-300/100 bg-white"
                 : "rounded-md hover:bg-white"
             }`}
-            onClick={() => goToOrgPage("ratings", "rating")}
+            onClick={() => goToOrgPage("rating", "ratings")}
           >
             {menuOpen ? (
               <div className="flex items-center gap-2">

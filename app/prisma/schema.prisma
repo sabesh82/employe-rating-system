@@ -59,6 +59,7 @@ model Organization {
   OrganizationMembers OrganizationMember[]
 
   Criteria Criteria[]
+  Ratings Rating[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -133,6 +134,9 @@ model Rating {
 
   supervisorId String @db.ObjectId
   Supervisor   User   @relation("SupervisorRatings", fields: [supervisorId], references: [id])
+
+  organizationId String       @db.ObjectId   
+  Organization   Organization @relation(fields: [organizationId], references: [id]) 
 
   criteriaScores CriteriaScore[]
 

@@ -4,13 +4,12 @@ import privateRoute from "@/app/api/helpers/privateRoute";
 import handleError from "@/app/api/helpers/handleError";
 import { CriteriaSchema } from "@/schemas/criteria.schema";
 
+// PATCH: Update a specific criteria
 export async function PATCH(
   request: NextRequest,
-  {
-    params,
-  }: { params: Promise<{ organizationId: string; criteriaId: string }> },
+  { params }: { params: { id: string; criteriaId: string } },
 ) {
-  const { organizationId, criteriaId } = await params;
+  const { id: organizationId, criteriaId } = params;
   const body = await request.json();
 
   return privateRoute(
@@ -21,23 +20,17 @@ export async function PATCH(
     },
     async () => {
       try {
-        //PATCH is a partial update, so you don't always want to require all fields. If you want to update just the name, you send { name: "New Name" }, no need to send maxScore. Using .partial() on your schema makes that validation easy and safe.
-        const validatedData = CriteriaSchema.partial().parse(body); // allow partial update
+        const validatedData = CriteriaSchema.partial().parse(body);
 
-        // Find criteria with orgId and owner info
-        const criteria = await prisma.criteria.findUnique({
+        const existingCriteria = await prisma.criteria.findUnique({
           where: { id: criteriaId },
           select: {
+            id: true,
             orgId: true,
-            Organization: {
-              select: {
-                ownerId: true,
-              },
-            },
           },
         });
 
-        if (!criteria) {
+        if (!existingCriteria) {
           return NextResponse.json(
             {
               success: false,
@@ -50,8 +43,20 @@ export async function PATCH(
           );
         }
 
-        // Update criteria
-        const updatedCriteria = await prisma.criteria.update({
+        if (existingCriteria.orgId !== organizationId) {
+          return NextResponse.json(
+            {
+              success: false,
+              error: {
+                code: "FORBIDDEN",
+                message: "Criteria does not belong to this organization",
+              },
+            },
+            { status: 403 },
+          );
+        }
+
+        const updated = await prisma.criteria.update({
           where: { id: criteriaId },
           data: validatedData,
         });
@@ -59,7 +64,7 @@ export async function PATCH(
         return NextResponse.json(
           {
             success: true,
-            data: updatedCriteria,
+            data: updated,
           },
           { status: 200 },
         );
@@ -70,11 +75,12 @@ export async function PATCH(
   );
 }
 
+// DELETE: Delete a specific criteria
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string; criteriaId: string }> },
+  { params }: { params: { id: string; criteriaId: string } },
 ) {
-  const { id: organizationId, criteriaId } = await params;
+  const { id: organizationId, criteriaId } = params;
 
   return privateRoute(
     request,
@@ -84,12 +90,11 @@ export async function DELETE(
     },
     async () => {
       try {
-        const criteria = await prisma.criteria.findUnique({
+        const existingCriteria = await prisma.criteria.findUnique({
           where: { id: criteriaId },
         });
 
-        // Optional: Verify the criteria belongs to the organization
-        if (!criteria || criteria.orgId !== organizationId) {
+        if (!existingCriteria || existingCriteria.orgId !== organizationId) {
           return NextResponse.json(
             {
               success: false,
@@ -102,6 +107,12 @@ export async function DELETE(
           );
         }
 
+        // Delete related CriteriaScore records first!
+        await prisma.criteriaScore.deleteMany({
+          where: { criteriaId },
+        });
+
+        // Now safely delete the Criteria
         await prisma.criteria.delete({
           where: { id: criteriaId },
         });

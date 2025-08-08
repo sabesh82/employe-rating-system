@@ -4,7 +4,7 @@ import React from "react";
 import { FaUserPlus } from "react-icons/fa6";
 import { FaUserCircle } from "react-icons/fa";
 import { MdKeyboardArrowRight } from "react-icons/md";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/stores/authStore";
 
 import { SlOptionsVertical } from "react-icons/sl";
@@ -17,6 +17,8 @@ const Home = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const orgName = searchParams.get("orgName");
+  const params = useParams();
+  const orgId = params?.id as string | undefined;
 
   return (
     <section className="h-screen w-full">
@@ -45,7 +47,12 @@ const Home = () => {
                 )}
               />
             </div>
-            <button className="flex transform cursor-pointer items-center gap-1 rounded-md border border-gray-400 px-2 py-1 duration-100 hover:bg-gray-100">
+            <button
+              className="flex transform cursor-pointer items-center gap-1 rounded-md border border-gray-400 px-2 py-1 duration-100 hover:bg-gray-100"
+              onClick={() =>
+                router.push(`/dashboard/owner/organizations/${orgId}/invite`)
+              }
+            >
               <FaUserPlus />
               Invite
             </button>
@@ -138,8 +145,13 @@ const Home = () => {
               <p className="text-center text-gray-500">
                 Stay updated with the team
               </p>
-              <button className="cursor-pointer text-blue-600 underline">
-                Create Now
+              <button
+                className="cursor-pointer text-blue-600 underline"
+                onClick={() =>
+                  router.push(`/dashboard/owner/organizations/${orgId}/assign`)
+                }
+              >
+                assign
               </button>
             </div>
           </div>

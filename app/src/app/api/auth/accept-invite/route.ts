@@ -87,12 +87,14 @@ export async function POST(request: NextRequest) {
       organizations: result.OrganizationMembers,
     });
 
+    const membership = result.OrganizationMembers[0];
     const responseData = {
       user: {
         id: result.id,
         email: result.email,
         firstName: result.firstName,
         lastName: result.lastName,
+        role: membership?.role,
       },
       organizationMemberships: result.OrganizationMembers,
       token: authToken,

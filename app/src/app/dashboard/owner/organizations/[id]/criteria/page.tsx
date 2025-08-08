@@ -23,6 +23,10 @@ export default function CriteriaPage() {
 
   const { jsonApiClient } = useApi();
 
+  const [editId, setEditId] = useState<string | null>(null);
+  const [editName, setEditName] = useState("");
+  const [editMaxScore, setEditMaxScore] = useState(0);
+
   const {
     register,
     handleSubmit,
@@ -39,7 +43,7 @@ export default function CriteriaPage() {
         `/organization/${organizationId}/criteria`,
       );
       setCriteriaList(res.data.data);
-    } catch (err) {
+    } catch {
       toast.error("Failed to load criteria");
     } finally {
       setLoading(false);
@@ -69,8 +73,25 @@ export default function CriteriaPage() {
       );
       toast.success("Deleted successfully");
       fetchCriteria();
-    } catch (err) {
+    } catch {
       toast.error("Failed to delete");
+    }
+  };
+
+  const handleUpdate = async (criteriaId: string) => {
+    try {
+      await jsonApiClient.patch(
+        `/organization/${organizationId}/criteria/${criteriaId}`,
+        {
+          name: editName,
+          maxScore: editMaxScore,
+        },
+      );
+      toast.success("Criteria updated");
+      setEditId(null);
+      fetchCriteria();
+    } catch {
+      toast.error("Failed to update criteria");
     }
   };
 
@@ -79,7 +100,7 @@ export default function CriteriaPage() {
   }, [organizationId]);
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8 dark:bg-gray-900">
+    <div className="min-h-screen bg-gray-50 p-2 dark:bg-gray-900">
       <div className="mx-auto max-w-4xl">
         <h1 className="mb-6 text-3xl font-bold text-gray-900 dark:text-white">
           Organization Criteria
@@ -88,7 +109,7 @@ export default function CriteriaPage() {
         {/* New Criteria Form */}
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="mb-8 space-y-4 rounded-lg bg-white p-6 shadow dark:bg-gray-800"
+          className="mb-5 space-y-3 rounded-lg border border-gray-200/50 bg-white p-6 shadow dark:bg-gray-800"
         >
           <h2 className="text-xl font-semibold text-gray-800 dark:text-white">
             Add New Criteria
@@ -99,7 +120,7 @@ export default function CriteriaPage() {
             </label>
             <input
               {...register("name")}
-              className="w-full rounded-md border px-4 py-2 focus:border-indigo-500 focus:ring focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+              className="w-full rounded-md border px-4 py-1 focus:border-indigo-500 focus:ring focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
             />
             {errors.name && (
               <p className="mt-1 text-sm text-red-500">{errors.name.message}</p>
@@ -112,7 +133,7 @@ export default function CriteriaPage() {
             <input
               type="number"
               {...register("maxScore", { valueAsNumber: true })}
-              className="w-full rounded-md border px-4 py-2 focus:border-indigo-500 focus:ring focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+              className="w-full rounded-md border px-4 py-1 focus:border-indigo-500 focus:ring focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
             />
             {errors.maxScore && (
               <p className="mt-1 text-sm text-red-500">
@@ -129,11 +150,15 @@ export default function CriteriaPage() {
           </button>
         </form>
 
-        {/* Criteria List */}
-        <div className="rounded-lg bg-white p-6 shadow dark:bg-gray-800">
-          <h2 className="mb-4 text-xl font-semibold text-gray-800 dark:text-white">
-            Existing Criteria
+        {/* Existing Criteria Section*/}
+        <div
+          className="flex flex-col rounded-lg border border-gray-400/50 bg-gray-200/30 p-4 shadow-lg shadow-gray-300 dark:bg-gray-800"
+          style={{ height: 300 }}
+        >
+          <h2 className="mb-3 text-xl font-semibold text-gray-800 dark:text-white">
+            Existing Criterias
           </h2>
+
           {loading ? (
             <p className="text-gray-500 dark:text-gray-300">Loading...</p>
           ) : criteriaList.length === 0 ? (
@@ -141,29 +166,78 @@ export default function CriteriaPage() {
               No criteria found.
             </p>
           ) : (
-            <ul className="scrollbar-thin scrollbar-thumb-indigo-500 max-h-[400px] space-y-3 overflow-y-auto">
-              {criteriaList.map((item) => (
-                <li
-                  key={item.id}
-                  className="flex items-center justify-between rounded-md border p-4 dark:border-gray-600"
-                >
-                  <div>
-                    <p className="text-lg font-medium text-gray-900 dark:text-white">
-                      {item.name}
-                    </p>
-                    <p className="text-sm text-gray-500 dark:text-gray-300">
-                      Max Score: {item.maxScore}
-                    </p>
-                  </div>
-                  <button
-                    onClick={() => deleteCriteria(item.id)}
-                    className="text-sm text-red-600 hover:underline"
+            <div className="scrollbar-thin scrollbar-thumb-indigo-500 flex-1 overflow-y-auto bg-white pr-2">
+              <ul className="space-y-3">
+                {criteriaList.map((item) => (
+                  <li
+                    key={item.id}
+                    className="flex items-center justify-between rounded-md border p-4 dark:border-gray-600"
                   >
-                    Delete
-                  </button>
-                </li>
-              ))}
-            </ul>
+                    {editId === item.id ? (
+                      <div className="w-full space-y-2">
+                        <input
+                          type="text"
+                          value={editName}
+                          onChange={(e) => setEditName(e.target.value)}
+                          className="w-full rounded-md border px-2 py-1 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                        />
+                        <input
+                          type="number"
+                          value={editMaxScore}
+                          onChange={(e) =>
+                            setEditMaxScore(Number(e.target.value))
+                          }
+                          className="w-full rounded-md border px-2 py-1 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                        />
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => handleUpdate(item.id)}
+                            className="rounded bg-green-600 px-3 py-1 text-white hover:bg-green-700"
+                          >
+                            Save
+                          </button>
+                          <button
+                            onClick={() => setEditId(null)}
+                            className="rounded bg-gray-400 px-3 py-1 text-white hover:bg-gray-500"
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <>
+                        <div>
+                          <p className="text-lg font-medium text-gray-900 dark:text-white">
+                            {item.name}
+                          </p>
+                          <p className="text-sm text-gray-500 dark:text-gray-300">
+                            Max Score: {item.maxScore}
+                          </p>
+                        </div>
+                        <div className="space-x-4">
+                          <button
+                            onClick={() => {
+                              setEditId(item.id);
+                              setEditName(item.name);
+                              setEditMaxScore(item.maxScore);
+                            }}
+                            className="text-sm text-blue-600 hover:underline"
+                          >
+                            Edit
+                          </button>
+                          <button
+                            onClick={() => deleteCriteria(item.id)}
+                            className="text-sm text-red-600 hover:underline"
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </div>
           )}
         </div>
       </div>

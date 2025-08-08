@@ -19,40 +19,87 @@ export async function POST(
     },
     async (user) => {
       try {
-        //validation
+        // 1. Validate request body
         const parsed = createRatingSchema.parse(body);
-
         const { employeeId, periodStart, periodEnd, feedback, criteriaScores } =
           parsed;
 
-        // Find supervisor's membership in this organization
-        const supervisorMembership = await prisma.organizationMember.findFirst({
+        // 2. Check if employee being rated is a member of the organization
+        const employeeMembership = await prisma.organizationMember.findFirst({
           where: {
             userId: employeeId,
-            supervisorId: user.id,
+            organizationId: organizationId,
           },
           include: {
-            Organization: true,
+            User: true,
           },
         });
 
-        if (!supervisorMembership) {
+        if (!employeeMembership) {
           return NextResponse.json(
             {
               success: false,
               error: {
-                code: "NOT_SUPERVISOR",
-                message: "You are not the supervisor of this employee",
+                code: "EMPLOYEE_NOT_IN_ORG",
+                message: "The employee is not part of this organization",
+              },
+            },
+            { status: 400 },
+          );
+        }
+
+        const orgMembership = user.organizations.find(
+          (org) => org.organizationId === organizationId,
+        );
+
+        const isOwner = orgMembership?.role === "OWNER";
+
+        const employeeRole = employeeMembership.role;
+
+        // 3. Determine if supervisor is allowed
+        let isAllowed = false;
+
+        if (isOwner) {
+          isAllowed = true; // Owner can rate anyone
+        } else if (
+          orgMembership?.role === "SUPERVISOR" &&
+          employeeRole === "EMPLOYEE"
+        ) {
+          // Supervisor can only rate assigned employees
+          const isSupervisor = await prisma.organizationMember.findFirst({
+            where: {
+              userId: employeeId,
+              supervisorId: user.id,
+            },
+          });
+
+          if (isSupervisor) isAllowed = true;
+        }
+
+        if (!isAllowed) {
+          return NextResponse.json(
+            {
+              success: false,
+              error: {
+                code: "NOT_AUTHORIZED",
+                message: "You are not authorized to rate this employee",
+                debug: {
+                  userId: user.id,
+                  employeeId,
+                  userRole: user.role,
+                  employeeRole,
+                  isOwner,
+                  organizationId,
+                },
               },
             },
             { status: 403 },
           );
         }
 
-        // Get all criteria IDs from the payload
+        // 4. Validate criteria belong to the organization
         const criteriaIds = criteriaScores.map((cs) => cs.criteriaId);
 
-        // Find all matching criteria in the organization
         const criteria = await prisma.criteria.findMany({
           where: {
             id: { in: criteriaIds },
@@ -61,7 +108,6 @@ export async function POST(
           select: { id: true },
         });
 
-        // Validate all IDs exist
         if (criteria.length !== criteriaScores.length) {
           const validIds = new Set(criteria.map((c) => c.id));
 
@@ -81,13 +127,13 @@ export async function POST(
           );
         }
 
-        // Compute total and max score
+        // 5. Calculate score
         const maxOverallScore = criteriaScores.reduce(
           (sum, cs) => sum + cs.score,
           0,
         );
 
-        // Create rating first
+        // 6. Create rating
         const newRating = await prisma.rating.create({
           data: {
             periodStart: new Date(periodStart),
@@ -97,6 +143,7 @@ export async function POST(
             maxOverallScore,
             employeeId,
             supervisorId: user.id,
+            organizationId,
             criteriaScores: {
               create: criteriaScores.map((cs) => ({
                 criteriaId: cs.criteriaId,
@@ -115,6 +162,66 @@ export async function POST(
         );
       } catch (error) {
         return handleError(error, "Failed to create rating");
+      }
+    },
+  );
+}
+
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+) {
+  const { id: organizationId } = await params;
+
+  return privateRoute(
+    request,
+    {
+      organizationId,
+      permissions: ["RATING:*:*", "RATING:READ:*"],
+    },
+    async (user) => {
+      try {
+        const ratings = await prisma.rating.findMany({
+          where: {
+            organizationId,
+            ...(user.role === "SUPERVISOR" && { supervisorId: user.id }),
+          },
+          include: {
+            criteriaScores: {
+              include: {
+                Criteria: {
+                  select: {
+                    name: true,
+                  },
+                },
+              },
+            },
+            Employee: {
+              select: {
+                firstName: true,
+                lastName: true,
+                email: true,
+              },
+            },
+            Supervisor: {
+              select: {
+                firstName: true,
+                lastName: true,
+                email: true,
+              },
+            },
+          },
+          orderBy: {
+            createdAt: "desc",
+          },
+        });
+
+        return NextResponse.json(
+          { success: true, data: ratings },
+          { status: 200 },
+        );
+      } catch (error) {
+        return handleError(error, "Failed to fetch ratings");
       }
     },
   );

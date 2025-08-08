@@ -31,6 +31,10 @@ export default async function checkPermissions({
     );
   }
 
+  if (orgMembership.role?.toUpperCase() === "OWNER") {
+    return null;
+  }
+
   // Check each required permission
   for (const requiredPermission of requiredPermissions) {
     const [requiredResource, requiredAction, requiredScope] =

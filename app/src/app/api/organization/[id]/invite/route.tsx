@@ -82,10 +82,18 @@ export async function POST(
             );
           }
 
-          return NextResponse.json({});
+          return NextResponse.json(
+            {
+              success: false,
+              error: {
+                code: "USER_ALREADY_MEMBER",
+                message: "User is already a member of this organization",
+              },
+            },
+            { status: 409 },
+          );
         }
 
-        //prepare user data
         const permissions =
           role === UserRole.SUPERVISOR
             ? SUPERVISOR_PERMISSIONS
@@ -132,21 +140,19 @@ export async function POST(
               },
             });
 
-        //generate Invite token and link
         const token = generateInviteToken({
           id: user.id,
           organizationId,
         });
 
-        const inviteLink = `${process.env.NEXT_PUBLIC_HOST_URL}/invite?token=${token}`;
+        const inviteLink = `${process.env.NEXT_PUBLIC_HOST_URL}/accept-invite?token=${token}`;
 
-        //send invitation email
         const emailHtml = await render(
           <InviteUser
-            invitedByUsername={inviter.firstName || inviter.emil}
+            invitedByUsername={inviter.firstName || inviter.email}
             teamName={organization.name}
             username={user.firstName || user.email}
-            invitedByEmail={inviter.emai}
+            invitedByEmail={inviter.email}
             inviteLink={inviteLink}
           />,
         );
@@ -157,7 +163,6 @@ export async function POST(
           html: emailHtml,
         });
 
-        //ideal success response
         return NextResponse.json(
           {
             success: true,
