@@ -2,6 +2,13 @@
 
 import React, { useEffect, useState } from "react";
 import { useApi } from "@/providers/ApiProvider";
+import {
+  FaBuilding,
+  FaUserTag,
+  FaCheckCircle,
+  FaTimesCircle,
+  FaSearch,
+} from "react-icons/fa";
 
 interface OrganizationMember {
   id: string;
@@ -26,6 +33,7 @@ const MembershipPage = () => {
   const { jsonApiClient } = useApi();
   const [memberships, setMemberships] = useState<OrganizationMember[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     const fetchMemberships = async () => {
@@ -36,7 +44,13 @@ const MembershipPage = () => {
             "/auth/whoami",
           );
         console.log("Whoami response:", response.data);
-        setMemberships(response.data.data.OrganizationMembers ?? []);
+        // Normalize status to lowercase
+        const normalizedMemberships =
+          response.data.data.OrganizationMembers?.map((member) => ({
+            ...member,
+            status: member.status.trim().toLowerCase(), // Convert "ACTIVE" to "active"
+          })) ?? [];
+        setMemberships(normalizedMemberships);
       } catch (error) {
         console.error("Failed to fetch memberships", error);
         setMemberships([]);
@@ -48,48 +62,170 @@ const MembershipPage = () => {
     fetchMemberships();
   }, [jsonApiClient]);
 
+  const filteredMemberships = memberships.filter(
+    (member) =>
+      member.Organization.name
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase()) ||
+      member.role.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      member.status.toLowerCase().includes(searchQuery.toLowerCase()),
+  );
+
   if (loading) {
     return (
-      <p className="animate-pulse p-6 text-center text-lg font-medium text-slate-800">
-        Loading memberships...
-      </p>
-    );
-  }
-
-  if (memberships.length === 0) {
-    return (
-      <p className="p-6 text-center text-lg text-slate-600">
-        You don’t have any organization memberships yet.
-      </p>
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-gray-50 to-gray-100">
+        <div className="flex flex-col items-center space-y-4">
+          <div className="h-12 w-12 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div>
+          <p className="animate-pulse text-lg font-semibold text-gray-800">
+            Loading memberships...
+          </p>
+        </div>
+      </div>
     );
   }
 
   return (
-    <div className="mx-auto max-w-4xl p-6">
-      <h1 className="mb-6 text-3xl font-bold text-slate-900">
-        My Organization Memberships
-      </h1>
-      <div className="space-y-4">
-        {memberships.map((member) => (
-          <div
-            key={member.id}
-            className="rounded-lg border border-indigo-400/50 bg-indigo-100/50 p-4 shadow-md"
-          >
-            <div className="text-xl font-semibold text-indigo-700">
-              {member.Organization.name}
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 p-6 sm:p-8">
+      <div className="mx-auto max-w-7xl">
+        <div className="mb-8">
+          <div className="flex flex-col justify-between gap-6 sm:flex-row sm:items-center">
+            <div>
+              <h1 className="text-3xl font-extrabold tracking-tight text-gray-900">
+                My Organization Memberships
+              </h1>
+              <p className="mt-2 text-base text-gray-600">
+                Manage and view your organization memberships
+              </p>
             </div>
-            <div className="mt-1 text-sm text-slate-700">
-              <p>
-                <span className="font-medium">Role: </span>
-                {member.role}
-              </p>
-              <p>
-                <span className="font-medium">Status: </span>
-                {member.status}
-              </p>
+            <div className="relative w-full sm:w-80">
+              <div className="absolute inset-y-0 left-0 flex items-center pl-3">
+                <FaSearch
+                  className="h-5 w-5 text-gray-400"
+                  aria-hidden="true"
+                />
+              </div>
+              <input
+                type="text"
+                placeholder="Search memberships..."
+                className="block w-full rounded-lg border border-gray-200 bg-white py-2.5 pr-4 pl-10 text-sm text-gray-900 placeholder-gray-400 transition-all duration-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30 focus:outline-none"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                aria-label="Search memberships"
+              />
             </div>
           </div>
-        ))}
+        </div>
+
+        {filteredMemberships.length === 0 ? (
+          <div className="flex flex-col items-center justify-center rounded-xl bg-white p-8 shadow-lg transition-all duration-300">
+            <div className="rounded-full bg-blue-50 p-4">
+              <FaBuilding
+                className="h-10 w-10 text-blue-500"
+                aria-hidden="true"
+              />
+            </div>
+            <h3 className="mt-4 text-xl font-semibold text-gray-900">
+              No memberships found
+            </h3>
+            <p className="mt-2 max-w-md text-center text-sm text-gray-500">
+              You don’t have any organization memberships yet. Join an
+              organization to get started.
+            </p>
+          </div>
+        ) : (
+          <>
+            <div className="mb-6 flex items-center justify-between">
+              <p className="text-base font-medium text-gray-700">
+                {filteredMemberships.length}{" "}
+                {filteredMemberships.length === 1
+                  ? "membership"
+                  : "memberships"}{" "}
+                found
+              </p>
+            </div>
+            <div className="overflow-hidden rounded-xl bg-white shadow-lg">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th
+                      scope="col"
+                      className="px-6 py-4 text-left text-sm font-semibold tracking-wider text-gray-600 uppercase"
+                    >
+                      Organization
+                    </th>
+                    <th
+                      scope="col"
+                      className="px-6 py-4 text-left text-sm font-semibold tracking-wider text-gray-600 uppercase"
+                    >
+                      Role
+                    </th>
+                    <th
+                      scope="col"
+                      className="px-6 py-4 text-left text-sm font-semibold tracking-wider text-gray-600 uppercase"
+                    >
+                      Status
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200 bg-white">
+                  {filteredMemberships.map((member) => (
+                    <tr
+                      key={member.id}
+                      className="transition-colors duration-200 hover:bg-gray-50"
+                      role="row"
+                    >
+                      <td className="px-6 py-4 text-sm font-medium whitespace-nowrap text-gray-900">
+                        <div className="flex items-center space-x-2">
+                          <FaBuilding
+                            className="h-5 w-5 text-blue-500"
+                            aria-hidden="true"
+                          />
+                          <span>{member.Organization.name}</span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-600">
+                        <div className="flex items-center space-x-2">
+                          <FaUserTag
+                            className="h-5 w-5 text-gray-400"
+                            aria-hidden="true"
+                          />
+                          <span className="inline-flex items-center rounded-full bg-blue-50 px-3 py-1 text-sm font-medium text-blue-700">
+                            {member.role}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-600">
+                        <div className="flex items-center space-x-2">
+                          {member.status === "active" ? (
+                            <FaCheckCircle
+                              className="h-5 w-5 text-green-500"
+                              aria-hidden="true"
+                            />
+                          ) : (
+                            <FaTimesCircle
+                              className="h-5 w-5 text-red-500"
+                              aria-hidden="true"
+                            />
+                          )}
+                          <span
+                            className={`inline-flex items-center rounded-full px-3 py-1 text-sm font-medium ${
+                              member.status === "active"
+                                ? "bg-green-50 text-green-700"
+                                : "bg-red-50 text-red-700"
+                            }`}
+                          >
+                            {member.status.charAt(0).toUpperCase() +
+                              member.status.slice(1)}
+                          </span>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );

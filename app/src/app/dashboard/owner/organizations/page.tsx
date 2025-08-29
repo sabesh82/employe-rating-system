@@ -2,7 +2,15 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "@/stores/authStore";
 import { useApi } from "@/providers/ApiProvider";
-import { FaRegSquarePlus } from "react-icons/fa6";
+import {
+  FaBuilding,
+  FaTrash,
+  FaCalendar,
+  FaCrown,
+  FaPlus,
+  FaSearch,
+  FaEye,
+} from "react-icons/fa";
 import { useRouter } from "next/navigation";
 
 interface Organization {
@@ -23,6 +31,7 @@ const MyOrganizationsPage = () => {
   const [organizations, setOrganizations] = useState<Organization[]>([]);
   const [loading, setLoading] = useState(true);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
   const router = useRouter();
 
   useEffect(() => {
@@ -43,7 +52,7 @@ const MyOrganizationsPage = () => {
 
   const handleDelete = async (id: string) => {
     const confirmed = window.confirm(
-      "Are you sure you want to delete this organization?",
+      "Are you sure you want to delete this organization? This action cannot be undone.",
     );
     if (!confirmed) return;
 
@@ -60,83 +69,205 @@ const MyOrganizationsPage = () => {
     }
   };
 
+  const filteredOrganizations = organizations.filter(
+    (org) =>
+      org.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      org.Owner?.email.toLowerCase().includes(searchQuery.toLowerCase()),
+  );
+
   if (loading) {
     return (
-      <p className="animate-pulse p-6 text-center text-lg font-medium text-slate-800">
-        Loading organizations...
-      </p>
+      <div className="flex min-h-screen items-center justify-center bg-gray-50">
+        <div className="flex flex-col items-center">
+          <div className="h-10 w-10 animate-spin rounded-full border-4 border-blue-600 border-t-transparent"></div>
+          <p className="mt-4 text-lg font-medium text-gray-700">
+            Loading organizations...
+          </p>
+        </div>
+      </div>
     );
   }
 
   return (
-    <div className="mx-auto flex h-[calc(100vh-4rem)] max-w-4xl flex-col p-6">
-      {/* Header Section */}
-      <div className="mb-7 flex items-center justify-between">
-        <h1 className="text-3xl font-bold text-slate-900">My Organizations</h1>
-        <button
-          className="flex cursor-pointer items-center gap-1.5 rounded border border-gray-400 bg-gradient-to-br from-white to-gray-300 px-3 py-1.5 text-sm font-semibold shadow-md shadow-indigo-400 transition duration-200 hover:from-white hover:to-gray-400"
-          onClick={() => router.push("/dashboard/owner/organizations/neworg")}
-        >
-          <FaRegSquarePlus className="text-lg" />
-          <span className="text-md">New Organization</span>
-        </button>
-      </div>
-
-      {/* Content Section */}
-      {organizations.length === 0 ? (
-        <p className="mt-12 text-center text-lg text-slate-600 dark:text-slate-400">
-          You don’t have any organizations yet.
-        </p>
-      ) : (
-        <div className="flex-1 overflow-hidden">
-          <div className="flex h-full flex-col space-y-7 overflow-y-auto pr-2">
-            {organizations.map((org) => (
-              <div
-                key={org.id}
-                className="flex flex-col rounded-xl border border-indigo-400/50 bg-blue-100/50 p-6 shadow-md shadow-indigo-200 transition hover:shadow-lg hover:shadow-indigo-400"
-              >
-                <button
-                  onClick={() =>
-                    router.push(`/dashboard/owner/organizations/${org.id}`)
-                  }
-                  className="mb-2 w-fit text-left text-2xl font-semibold text-indigo-700 underline-offset-4 hover:underline"
-                >
-                  {org.name}
-                </button>
-
-                <div className="flex flex-col gap-1 text-sm text-slate-700">
-                  <div>
-                    <span className="font-medium">Organization Status: </span>
-                    <span className="capitalize">{org.status}</span>
-                  </div>
-                  <div>
-                    <span className="font-medium">Created At: </span>
-                    <time dateTime={org.createdAt}>
-                      {new Date(org.createdAt).toLocaleDateString(undefined, {
-                        year: "numeric",
-                        month: "short",
-                        day: "numeric",
-                      })}
-                    </time>
-                  </div>
-                  <div className="truncate">
-                    <span className="font-medium">Owner: </span>
-                    {org.Owner?.name ?? org.Owner?.email}
-                  </div>
+    <div className="min-h-screen bg-gray-50 p-6">
+      <div className="mx-auto max-w-7xl">
+        {/* Header Section */}
+        <div className="mb-8">
+          <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900">
+                Organizations
+              </h1>
+              <p className="mt-1 text-gray-600">
+                Manage your organizations and access their settings
+              </p>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="relative">
+                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                  <FaSearch className="h-4 w-4 text-gray-400" />
                 </div>
-
-                <button
-                  onClick={() => handleDelete(org.id)}
-                  disabled={deletingId === org.id}
-                  className="mt-4 w-fit rounded-md border-1 border-white bg-red-500 px-4 py-1.5 text-sm font-medium text-white transition hover:bg-red-600 disabled:opacity-50"
-                >
-                  {deletingId === org.id ? "Deleting..." : "Delete"}
-                </button>
+                <input
+                  type="text"
+                  placeholder="Search organizations..."
+                  className="block w-full rounded-md border border-gray-300 py-2 pr-3 pl-10 text-sm placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
               </div>
-            ))}
+              <button
+                className="flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2.5 text-sm font-medium text-white shadow-sm transition-all hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none"
+                onClick={() =>
+                  router.push("/dashboard/owner/organizations/neworg")
+                }
+              >
+                <FaPlus className="text-sm" />
+                <span>New Organization</span>
+              </button>
+            </div>
           </div>
         </div>
-      )}
+
+        {/* Content Section */}
+        {organizations.length === 0 ? (
+          <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-gray-300 bg-white px-4 py-16">
+            <div className="rounded-full bg-blue-100 p-4">
+              <FaBuilding className="h-8 w-8 text-blue-600" />
+            </div>
+            <h3 className="mt-5 text-lg font-medium text-gray-900">
+              No organizations
+            </h3>
+            <p className="mt-2 text-sm text-gray-600">
+              Get started by creating your first organization.
+            </p>
+            <button
+              className="mt-6 inline-flex items-center rounded-md bg-blue-600 px-4 py-2.5 text-sm font-medium text-white shadow-sm transition-all hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none"
+              onClick={() =>
+                router.push("/dashboard/owner/organizations/neworg")
+              }
+            >
+              <FaPlus className="mr-2 text-sm" />
+              New Organization
+            </button>
+          </div>
+        ) : (
+          <>
+            <div className="mb-4 flex items-center justify-between">
+              <p className="text-sm text-gray-700">
+                {filteredOrganizations.length}{" "}
+                {filteredOrganizations.length === 1
+                  ? "organization"
+                  : "organizations"}
+              </p>
+            </div>
+
+            <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white shadow-sm">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th
+                      scope="col"
+                      className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
+                    >
+                      Name
+                    </th>
+                    <th
+                      scope="col"
+                      className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
+                    >
+                      Owner
+                    </th>
+                    <th
+                      scope="col"
+                      className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
+                    >
+                      Created At
+                    </th>
+                    <th
+                      scope="col"
+                      className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
+                    >
+                      Status
+                    </th>
+                    <th scope="col" className="relative px-6 py-3">
+                      <span className="sr-only">Actions</span>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200 bg-white">
+                  {filteredOrganizations.map((org) => (
+                    <tr
+                      key={org.id}
+                      className="transition-colors hover:bg-gray-50"
+                    >
+                      <td className="px-6 py-4 text-sm font-medium whitespace-nowrap text-gray-900">
+                        <button
+                          onClick={() =>
+                            router.push(
+                              `/dashboard/owner/organizations/${org.id}`,
+                            )
+                          }
+                          className="text-left text-blue-600 hover:text-blue-800 hover:underline"
+                        >
+                          {org.name}
+                        </button>
+                      </td>
+                      <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-500">
+                        <div className="flex items-center">
+                          <FaCrown className="mr-1.5 h-3.5 w-3.5 flex-shrink-0 text-gray-400" />
+                          {org.Owner?.name || org.Owner?.email}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-500">
+                        <div className="flex items-center">
+                          <FaCalendar className="mr-1.5 h-3.5 w-3.5 flex-shrink-0 text-gray-400" />
+                          <time dateTime={org.createdAt}>
+                            {new Date(org.createdAt).toLocaleDateString()}
+                          </time>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-500">
+                        <span
+                          className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                            org.status === "active"
+                              ? "bg-green-100 text-green-800"
+                              : "bg-yellow-100 text-yellow-800"
+                          }`}
+                        >
+                          {org.status}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-right text-sm font-medium whitespace-nowrap">
+                        <div className="flex items-center justify-end space-x-3">
+                          <button
+                            onClick={() =>
+                              router.push(
+                                `/dashboard/owner/organizations/${org.id}`,
+                              )
+                            }
+                            className="inline-flex items-center rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none"
+                          >
+                            <FaEye className="mr-1.5 -ml-0.5 h-4 w-4" />
+                            View
+                          </button>
+                          <button
+                            onClick={() => handleDelete(org.id)}
+                            disabled={deletingId === org.id}
+                            className="inline-flex items-center rounded-md border border-red-300 bg-white px-3 py-2 text-sm font-medium text-red-700 shadow-sm hover:bg-red-50 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:outline-none disabled:opacity-50"
+                          >
+                            <FaTrash className="mr-1.5 -ml-0.5 h-4 w-4" />
+                            {deletingId === org.id ? "Deleting..." : "Delete"}
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
+        )}
+      </div>
     </div>
   );
 };
