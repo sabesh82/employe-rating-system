@@ -32,22 +32,20 @@ const SideBar = () => {
 
   return (
     <div
-      className={`relative flex h-screen flex-col border-r border-gray-300/100 bg-gray-200/50 ${
-        menuOpen ? "min-w-[240px]" : "min-w-[70px]"
-      }`}
+      className={`relative flex h-screen flex-col border-r border-gray-300/100 bg-gray-200/50 dark:border-gray-700 dark:bg-gray-900 ${menuOpen ? "min-w-[240px]" : "min-w-[70px]"}`}
     >
       {/* Top Section */}
       <div className="flex items-center justify-between p-3.5 px-5">
-        <div className="rounded-full border border-blue-400 bg-blue-100 p-0.5 shadow-lg shadow-indigo-600">
+        <div className="rounded-full border border-blue-400 bg-blue-100 p-0.5 shadow-lg shadow-indigo-600 dark:border-blue-600 dark:bg-blue-900">
           <DiCssdeck
             onClick={() => setMenuOpen(!menuOpen)}
-            className="size-7 cursor-pointer text-indigo-600"
+            className="size-7 cursor-pointer text-indigo-600 dark:text-indigo-400"
           />
         </div>
         {menuOpen && (
           <FiMenu
             onClick={() => setMenuOpen(!menuOpen)}
-            className="size-5 cursor-pointer"
+            className="size-5 cursor-pointer text-gray-700 dark:text-gray-300"
           />
         )}
       </div>
@@ -59,8 +57,8 @@ const SideBar = () => {
           <button
             className={`flex w-full items-center px-2 py-0.5 ${
               selected === "dashboard"
-                ? "rounded-md border border-gray-300/100 bg-white"
-                : "rounded-md hover:bg-white"
+                ? "rounded-md border border-gray-300/100 bg-white dark:border-gray-600 dark:bg-gray-800"
+                : "rounded-md hover:bg-white dark:hover:bg-gray-800"
             }`}
             onClick={() => {
               setSelected("dashboard");
@@ -75,12 +73,12 @@ const SideBar = () => {
             }}
           >
             {menuOpen ? (
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 text-gray-800 dark:text-gray-200">
                 <IoIosHome className="size-5" />
                 <p>Dashboard</p>
               </div>
             ) : (
-              <IoIosHome className="size-5" />
+              <IoIosHome className="size-5 text-gray-800 dark:text-gray-200" />
             )}
           </button>
 
@@ -88,8 +86,8 @@ const SideBar = () => {
           <button
             className={`flex w-full items-center px-2 py-0.5 ${
               selected === "organization"
-                ? "rounded-md border border-gray-300/100 bg-white"
-                : "rounded-md hover:bg-white"
+                ? "rounded-md border border-gray-300/100 bg-white dark:border-gray-600 dark:bg-gray-800"
+                : "rounded-md hover:bg-white dark:hover:bg-gray-800"
             }`}
             onClick={() => {
               setSelected("organization");
@@ -97,12 +95,12 @@ const SideBar = () => {
             }}
           >
             {menuOpen ? (
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 text-gray-800 dark:text-gray-200">
                 <GrOrganization className="size-5" />
                 <p>My Organizations</p>
               </div>
             ) : (
-              <FaHistory className="size-5" />
+              <FaHistory className="size-5 text-gray-800 dark:text-gray-200" />
             )}
           </button>
 
@@ -110,8 +108,8 @@ const SideBar = () => {
           <button
             className={`flex w-full items-center px-2 py-0.5 ${
               selected === "membership"
-                ? "rounded-md border border-gray-300/100 bg-white"
-                : "rounded-md hover:bg-white"
+                ? "rounded-md border border-gray-300/100 bg-white dark:border-gray-600 dark:bg-gray-800"
+                : "rounded-md hover:bg-white dark:hover:bg-gray-800"
             }`}
             onClick={() => {
               setSelected("membership");
@@ -119,12 +117,12 @@ const SideBar = () => {
             }}
           >
             {menuOpen ? (
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 text-gray-800 dark:text-gray-200">
                 <FaBuildingUser className="size-5" />
                 <p>Membership</p>
               </div>
             ) : (
-              <FaBuildingUser className="size-5" />
+              <FaBuildingUser className="size-5 text-gray-800 dark:text-gray-200" />
             )}
           </button>
 
@@ -132,8 +130,8 @@ const SideBar = () => {
           <button
             className={`flex w-full items-center px-2 py-0.5 ${
               selected === "settings"
-                ? "rounded-md border border-gray-300/100 bg-white"
-                : "rounded-md hover:bg-white"
+                ? "rounded-md border border-gray-300/100 bg-white dark:border-gray-600 dark:bg-gray-800"
+                : "rounded-md hover:bg-white dark:hover:bg-gray-800"
             }`}
             onClick={() => {
               setSelected("settings");
@@ -141,12 +139,12 @@ const SideBar = () => {
             }}
           >
             {menuOpen ? (
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 text-gray-800 dark:text-gray-200">
                 <IoSettings className="size-5" />
                 <p>Settings</p>
               </div>
             ) : (
-              <IoSettings className="size-5" />
+              <IoSettings className="size-5 text-gray-800 dark:text-gray-200" />
             )}
           </button>
 
@@ -154,8 +152,8 @@ const SideBar = () => {
           <button
             className={`flex w-full items-center px-2 py-0.5 ${
               selected === "help"
-                ? "rounded-md border border-gray-300/100 bg-white"
-                : "rounded-md hover:bg-white"
+                ? "rounded-md border border-gray-300/100 bg-white dark:border-gray-600 dark:bg-gray-800"
+                : "rounded-md hover:bg-white dark:hover:bg-gray-800"
             }`}
             onClick={() => {
               setSelected("help");
@@ -163,12 +161,12 @@ const SideBar = () => {
             }}
           >
             {menuOpen ? (
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 text-gray-800 dark:text-gray-200">
                 <IoMdHelpCircle className="size-5" />
                 <p>Help</p>
               </div>
             ) : (
-              <IoMdHelpCircle className="size-5" />
+              <IoMdHelpCircle className="size-5 text-gray-800 dark:text-gray-200" />
             )}
           </button>
 
@@ -176,8 +174,8 @@ const SideBar = () => {
           <button
             className={`flex w-full items-center px-2 py-0.5 ${
               selected === "calendar"
-                ? "rounded-md border border-gray-300/100 bg-white"
-                : "rounded-md hover:bg-white"
+                ? "rounded-md border border-gray-300/100 bg-white dark:border-gray-600 dark:bg-gray-800"
+                : "rounded-md hover:bg-white dark:hover:bg-gray-800"
             }`}
             onClick={() => {
               setSelected("calendar");
@@ -185,12 +183,12 @@ const SideBar = () => {
             }}
           >
             {menuOpen ? (
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 text-gray-800 dark:text-gray-200">
                 <FaRegCalendarAlt className="size-5" />
                 <p>Calendar</p>
               </div>
             ) : (
-              <FaRegCalendarAlt className="size-5" />
+              <FaRegCalendarAlt className="size-5 text-gray-800 dark:text-gray-200" />
             )}
           </button>
         </div>
@@ -199,7 +197,9 @@ const SideBar = () => {
       {/* Rating Section */}
       <div className="mt-2 p-3.5">
         {menuOpen && (
-          <h2 className="mb-3 text-gray-500">Team Rating Management</h2>
+          <h2 className="mb-3 text-gray-500 dark:text-gray-400">
+            Team Rating Management
+          </h2>
         )}
 
         <div className="flex flex-col space-y-2">
@@ -207,18 +207,18 @@ const SideBar = () => {
           <button
             className={`flex w-full items-center px-2 py-0.5 ${
               selected === "rating"
-                ? "rounded-md border border-gray-300/100 bg-white"
-                : "rounded-md hover:bg-white"
+                ? "rounded-md border border-gray-300/100 bg-white dark:border-gray-600 dark:bg-gray-800"
+                : "rounded-md hover:bg-white dark:hover:bg-gray-800"
             }`}
             onClick={() => goToOrgPage("rating", "ratings")}
           >
             {menuOpen ? (
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 text-gray-800 dark:text-gray-200">
                 <GrScorecard className="size-5" />
                 <p>Ratings</p>
               </div>
             ) : (
-              <GrScorecard className="size-5" />
+              <GrScorecard className="size-5 text-gray-800 dark:text-gray-200" />
             )}
           </button>
 
@@ -226,18 +226,18 @@ const SideBar = () => {
           <button
             className={`flex w-full items-center px-2 py-0.5 ${
               selected === "criteria"
-                ? "rounded-md border border-gray-300/100 bg-white"
-                : "rounded-md hover:bg-white"
+                ? "rounded-md border border-gray-300/100 bg-white dark:border-gray-600 dark:bg-gray-800"
+                : "rounded-md hover:bg-white dark:hover:bg-gray-800"
             }`}
             onClick={() => goToOrgPage("criteria", "criteria")}
           >
             {menuOpen ? (
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 text-gray-800 dark:text-gray-200">
                 <GrCatalogOption className="size-5" />
                 <p>Criterias</p>
               </div>
             ) : (
-              <GrCatalogOption className="size-5" />
+              <GrCatalogOption className="size-5 text-gray-800 dark:text-gray-200" />
             )}
           </button>
 
@@ -245,18 +245,18 @@ const SideBar = () => {
           <button
             className={`flex w-full items-center px-2 py-0.5 ${
               selected === "employee"
-                ? "rounded-md border border-gray-300/100 bg-white"
-                : "rounded-md hover:bg-white"
+                ? "rounded-md border border-gray-300/100 bg-white dark:border-gray-600 dark:bg-gray-800"
+                : "rounded-md hover:bg-white dark:hover:bg-gray-800"
             }`}
             onClick={() => goToOrgPage("employees", "employee")}
           >
             {menuOpen ? (
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 text-gray-800 dark:text-gray-200">
                 <FaUserGroup className="size-5" />
                 <p>Employees</p>
               </div>
             ) : (
-              <FaUserGroup className="size-5" />
+              <FaUserGroup className="size-5 text-gray-800 dark:text-gray-200" />
             )}
           </button>
 
@@ -264,18 +264,18 @@ const SideBar = () => {
           <button
             className={`flex w-full items-center px-2 py-0.5 ${
               selected === "supervisor"
-                ? "rounded-md border border-gray-300/100 bg-white"
-                : "rounded-md hover:bg-white"
+                ? "rounded-md border border-gray-300/100 bg-white dark:border-gray-600 dark:bg-gray-800"
+                : "rounded-md hover:bg-white dark:hover:bg-gray-800"
             }`}
             onClick={() => goToOrgPage("supervisors", "supervisor")}
           >
             {menuOpen ? (
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 text-gray-800 dark:text-gray-200">
                 <FaUserTag className="size-5" />
                 <p>Supervisors</p>
               </div>
             ) : (
-              <FaUserTag className="size-5" />
+              <FaUserTag className="size-5 text-gray-800 dark:text-gray-200" />
             )}
           </button>
         </div>
@@ -291,12 +291,12 @@ const SideBar = () => {
           }}
         >
           {menuOpen ? (
-            <div className="flex cursor-pointer items-center gap-2 text-red-500">
+            <div className="flex cursor-pointer items-center gap-2 text-red-500 dark:text-red-400">
               <IoLogOut className="size-7" />
               <p>Logout</p>
             </div>
           ) : (
-            <IoLogOut className="size-7 text-red-500" />
+            <IoLogOut className="size-7 text-red-500 dark:text-red-400" />
           )}
         </button>
       </div>

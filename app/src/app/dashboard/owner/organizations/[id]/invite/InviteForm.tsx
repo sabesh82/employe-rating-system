@@ -69,9 +69,12 @@ const InviteForm: React.FC<InviteFormProps> = ({ organizationId }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="mx-auto max-w-md p-4">
-      <div className="mb-4">
-        <label htmlFor="email" className="mb-1 block font-semibold">
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="mx-auto max-w-md space-y-6 rounded-lg bg-white p-6 shadow-lg"
+    >
+      <div>
+        <label htmlFor="email" className="mb-2 block font-medium text-gray-700">
           Email
         </label>
         <input
@@ -85,23 +88,23 @@ const InviteForm: React.FC<InviteFormProps> = ({ organizationId }) => {
               message: "Invalid email address",
             },
           })}
-          className={`w-full rounded border px-3 py-2 ${
+          className={`w-full rounded-md border px-4 py-3 transition-colors focus:ring-2 focus:ring-blue-500 focus:outline-none ${
             errors.email ? "border-red-500" : "border-gray-300"
           }`}
         />
         {errors.email && (
-          <p className="mt-1 text-sm text-red-500">{errors.email.message}</p>
+          <p className="mt-2 text-sm text-red-600">{errors.email.message}</p>
         )}
       </div>
 
-      <div className="mb-6">
-        <label htmlFor="role" className="mb-1 block font-semibold">
+      <div>
+        <label htmlFor="role" className="mb-2 block font-medium text-gray-700">
           Role
         </label>
         <select
           id="role"
           {...register("role", { required: true })}
-          className="w-full rounded border border-gray-300 px-3 py-2"
+          className="w-full rounded-md border border-gray-300 px-4 py-3 transition-colors focus:ring-2 focus:ring-blue-500 focus:outline-none"
         >
           <option value="EMPLOYEE">Employee</option>
           <option value="SUPERVISOR">Supervisor</option>
@@ -111,7 +114,7 @@ const InviteForm: React.FC<InviteFormProps> = ({ organizationId }) => {
       <button
         type="submit"
         disabled={isSubmitting}
-        className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 disabled:opacity-50"
+        className="w-full rounded-md bg-blue-600 px-6 py-3 font-medium text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
       >
         {isSubmitting ? "Sending..." : "Send Invite"}
       </button>

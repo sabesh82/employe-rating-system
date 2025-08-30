@@ -21,7 +21,7 @@ export default function SettingsPage() {
   ] as const;
 
   return (
-    <section className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 p-6 transition-colors duration-300 sm:p-10 dark:from-gray-900 dark:to-gray-800">
+    <section className="min-h-screen p-6 transition-colors duration-300 sm:p-10 dark:bg-gray-900">
       <div className="mx-auto max-w-4xl">
         <h1 className="mb-12 text-4xl font-semibold tracking-tight text-gray-900 sm:text-5xl dark:text-white">
           Settings

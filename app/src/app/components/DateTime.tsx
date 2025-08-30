@@ -14,7 +14,7 @@ export default function DateTime() {
   }, []);
 
   return (
-    <div className="font-mono text-xs text-black">
+    <div className="font-mono text-xs text-black dark:text-white">
       {dateTime.toLocaleString()}
     </div>
   );
