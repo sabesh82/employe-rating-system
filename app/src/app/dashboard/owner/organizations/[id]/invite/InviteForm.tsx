@@ -71,10 +71,13 @@ const InviteForm: React.FC<InviteFormProps> = ({ organizationId }) => {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="mx-auto max-w-md space-y-6 rounded-lg bg-white p-6 shadow-lg"
+      className="mx-auto max-w-md space-y-6 rounded-lg border bg-white p-6 shadow-lg dark:border-white/50 dark:bg-gray-700 dark:text-gray-100"
     >
       <div>
-        <label htmlFor="email" className="mb-2 block font-medium text-gray-700">
+        <label
+          htmlFor="email"
+          className="mb-2 block font-medium text-gray-700 dark:text-gray-200"
+        >
           Email
         </label>
         <input
@@ -89,22 +92,29 @@ const InviteForm: React.FC<InviteFormProps> = ({ organizationId }) => {
             },
           })}
           className={`w-full rounded-md border px-4 py-3 transition-colors focus:ring-2 focus:ring-blue-500 focus:outline-none ${
-            errors.email ? "border-red-500" : "border-gray-300"
+            errors.email
+              ? "border-red-500 dark:border-red-400"
+              : "border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
           }`}
         />
         {errors.email && (
-          <p className="mt-2 text-sm text-red-600">{errors.email.message}</p>
+          <p className="mt-2 text-sm text-red-600 dark:text-red-400">
+            {errors.email.message}
+          </p>
         )}
       </div>
 
       <div>
-        <label htmlFor="role" className="mb-2 block font-medium text-gray-700">
+        <label
+          htmlFor="role"
+          className="mb-2 block font-medium text-gray-700 dark:text-gray-200"
+        >
           Role
         </label>
         <select
           id="role"
           {...register("role", { required: true })}
-          className="w-full rounded-md border border-gray-300 px-4 py-3 transition-colors focus:ring-2 focus:ring-blue-500 focus:outline-none"
+          className="w-full rounded-md border border-gray-300 px-4 py-3 transition-colors focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
         >
           <option value="EMPLOYEE">Employee</option>
           <option value="SUPERVISOR">Supervisor</option>
@@ -114,7 +124,7 @@ const InviteForm: React.FC<InviteFormProps> = ({ organizationId }) => {
       <button
         type="submit"
         disabled={isSubmitting}
-        className="w-full rounded-md bg-blue-600 px-6 py-3 font-medium text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+        className="w-full rounded-md bg-indigo-600 px-6 py-3 font-medium text-white transition-colors hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-indigo-600 dark:hover:bg-indigo-700"
       >
         {isSubmitting ? "Sending..." : "Send Invite"}
       </button>
