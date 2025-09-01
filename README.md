@@ -1,4 +1,4 @@
-# 🏆 Employee Rating System (Ongoing...)
+# 🏆 Employee Rating System
 
 A full-stack employee rating platform built with **Next.js**, **Prisma**, **MongoDB**, and **TypeScript**. Designed to enable Owner and Supervior to evaluate employee performance through structured, secure, and scalable workflows.
 
