@@ -1,6 +1,4 @@
-{
-  /* 
-  "use client";
+"use client";
 
 import cookieKeys from "@/configs/cookieKeys";
 import { useThemeActions, useTheme } from "@/stores/themeStore";
@@ -71,7 +69,7 @@ export default function SettingsPage() {
           </div>
         </div>
 
-        
+        {/* Future Settings Placeholder */}
         <div className="mt-8 rounded-xl bg-white p-6 shadow-lg ring-1 ring-gray-200/50 transition-all duration-300 dark:bg-gray-800 dark:shadow-gray-800/50 dark:ring-gray-700/50">
           <h2 className="mb-4 text-2xl font-semibold text-gray-800 dark:text-gray-100">
             More Settings
@@ -84,8 +82,3 @@ export default function SettingsPage() {
     </section>
   );
 }
-
-*/
-}
-import SettingsPage from "@/app/components/SettingsPage";
-export default SettingsPage;
