@@ -62,50 +62,6 @@ const EmployeeSidebar = () => {
           )}
         </button>
 
-        {/* My Organizations */}
-        <button
-          className={`flex w-full items-center px-2 py-0.5 ${
-            selected === "organization"
-              ? "rounded-md border border-gray-300/100 bg-white dark:border-gray-600 dark:bg-gray-800"
-              : "rounded-md hover:bg-white dark:hover:bg-gray-800"
-          }`}
-          onClick={() => {
-            setSelected("organization");
-            router.push("/dashboard/employee/organizations");
-          }}
-        >
-          {menuOpen ? (
-            <div className="flex items-center gap-2 text-gray-800 dark:text-gray-200">
-              <GrOrganization className="size-5" />
-              <p>My Organizations</p>
-            </div>
-          ) : (
-            <GrOrganization className="size-5 text-gray-800 dark:text-gray-200" />
-          )}
-        </button>
-
-        {/* My Supervisor */}
-        <button
-          className={`flex w-full items-center px-2 py-0.5 ${
-            selected === "supervisor"
-              ? "rounded-md border border-gray-300/100 bg-white dark:border-gray-600 dark:bg-gray-800"
-              : "rounded-md hover:bg-white dark:hover:bg-gray-800"
-          }`}
-          onClick={() => {
-            setSelected("supervisor");
-            router.push("/dashboard/employee/supervisors");
-          }}
-        >
-          {menuOpen ? (
-            <div className="flex items-center gap-2 text-gray-800 dark:text-gray-200">
-              <FaUserTag className="size-5" />
-              <p>My Supervisor</p>
-            </div>
-          ) : (
-            <FaUserTag className="size-5 text-gray-800 dark:text-gray-200" />
-          )}
-        </button>
-
         {/* Calendar */}
         <button
           className={`flex w-full items-center px-2 py-0.5 ${
